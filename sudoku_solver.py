@@ -3,7 +3,8 @@ import numpy as np
 
 # Print out Sudoku game board
 def print_game(game):
-    print(game)
+    for row in game:
+        print(row, end="\n")
 
 
 # Find an empty cell 
@@ -35,25 +36,44 @@ def is_in_sub_grid(grid, row, col, value):
     return False
 
 
-def check_for_duplicate_value(grid, row, col, value):
+def is_duplicate_value(grid, row, col, value):
     # check column for duplicate value
     for i in range(9):
         if grid[i][col] == value:
-            return False
+            return True
     
     # check row for duplicate value
     for j in range(9):
         if grid[row][j] == value:
-            return False
+            return True
     
     # check for duplicate value in the "sub grid"
     if is_in_sub_grid(grid, row, col, value):
-        return False
+        return True
 
     # must be a valid move 
-    return True
+    return False
 
 def solve_sudoku(grid):
+    row, col = find_empty_cell(grid)
+
+    # if no empty cell has been found, then we have solved the puzzle
+    if row == -1 and col == -1:
+        return True
+    
+    # assign n to numbers 1 through 9
+    for n in range(1,10):
+        if not is_duplicate_value(grid, row, col, n):
+            grid[row][col] = n
+
+            # recursion
+            if solve_sudoku(grid):
+                return True
+            
+            # if we've gotten to this point, we could not find a valid solution for this particular value of n
+            # undo the previous assignment
+            grid[row][col] = 0
+
     return False
 
 
@@ -72,8 +92,6 @@ if __name__ == "__main__":
         [0,4,0,0,0,0,8,7,0],
         [0,2,7,0,4,0,9,6,3]
     ]
-
-    print(get_sub_grid(game_board, 3,3))
 
     if solve_sudoku(game_board):
         print_game(game_board)

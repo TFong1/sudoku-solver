@@ -1,4 +1,4 @@
-import numpy as np
+
 
 
 # Print out Sudoku game board
